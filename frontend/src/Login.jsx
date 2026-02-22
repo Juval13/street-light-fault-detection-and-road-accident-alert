@@ -1,42 +1,76 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './styles.css';
 
 export default function Login({ onLogin }) {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simple demo authentication
-    if (username === 'admin' && password === 'admin') {
-      onLogin();
-    } else {
-      setError('Invalid credentials');
-    }
+    setError('');
+    const ws = new WebSocket('ws://localhost:8765');
+
+    ws.onopen = () => {
+      ws.send(JSON.stringify({
+        type: 'login',
+        email,
+        password
+      }));
+    };
+
+    ws.onmessage = (event) => {
+      const response = JSON.parse(event.data);
+      if (response.status === 'ok') {
+        onLogin();
+      } else {
+        setError(response.message);
+      }
+      ws.close();
+    };
+
+    ws.onerror = (error) => {
+      setError('WebSocket error. Is the backend running?');
+      console.error('WebSocket error:', error);
+      ws.close();
+    };
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <form onSubmit={handleSubmit} style={{ background: '#fff', padding: 32, borderRadius: 8, boxShadow: '0 2px 8px #0001', minWidth: 320 }}>
-        <h2>Login</h2>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-          style={{ width: '100%', marginBottom: 12, padding: 8 }}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          style={{ width: '100%', marginBottom: 12, padding: 8 }}
-        />
-        {error && <div style={{ color: 'red', marginBottom: 12 }}>{error}</div>}
-        <button type="submit" style={{ width: '100%', padding: 10, background: '#1976d2', color: '#fff', border: 'none', borderRadius: 4 }}>Login</button>
-      </form>
+    <div className="login-bg-img">
+      <div className="shape shape1"></div>
+      <div className="shape shape2"></div>
+      <div className="shape shape3"></div>
+      <div className="login-bg-overlay">
+        <form className="login-card" onSubmit={handleSubmit}>
+          <h2 className="login-title">Login</h2>
+          <label htmlFor="email" style={{textAlign:'left', width:'100%', fontWeight:'500', marginBottom:4}}>Email</label>
+          <input
+            id="email"
+            className="login-input"
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
+          <label htmlFor="password" style={{textAlign:'left', width:'100%', fontWeight:'500', marginBottom:4}}>Password</label>
+          <input
+            id="password"
+            className="login-input"
+            type="password"
+            placeholder="Enter your password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+          />
+          {error && <div className="login-error">{error}</div>}
+          <button className="login-btn" type="submit">Login</button>
+          <div style={{marginTop:16, display:'flex', justifyContent:'space-between', width:'100%'}}>
+            <Link to="/forgot-password" style={{color:'#1976d2', textDecoration:'underline', fontWeight:'500'}}>Forgot Password?</Link>
+            <Link to="/register" style={{color:'#1976d2', textDecoration:'underline', fontWeight:'500'}}>Sign Up</Link>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
