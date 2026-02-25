@@ -1,106 +1,146 @@
-<!-- Use this file to provide workspace-specific custom instructions to Copilot. For more details, visit https://code.visualstudio.com/docs/copilot/copilot-customization#_use-a-githubcopilotinstructionsmd-file -->
-- [x] Verify that the copilot-instructions.md file in the .github directory is created.
+# Copilot Instructions
 
-- [ ] Clarify Project Requirements
-	<!-- Ask for project type, language, and frameworks if not specified. Skip if already provided. -->
+Project-specific instructions for working with Copilot in this workspace.
 
-- [ ] Scaffold the Project
-	<!--
-	Ensure that the previous step has been marked as completed.
-	Call project setup tool with projectType parameter.
-	Run scaffolding command to create project files and folders.
-	Use '.' as the working directory.
-	If no appropriate projectType is available, search documentation using available tools.
-	Otherwise, create the project structure manually using available file creation tools.
-	-->
+## Project Overview
 
-- [ ] Customize the Project
-	<!--
-	Verify that all previous steps have been completed successfully and you have marked the step as completed.
-	Develop a plan to modify codebase according to user requirements.
-	Apply modifications using appropriate tools and user-provided references.
-	Skip this step for "Hello World" projects.
-	-->
+**Street Light Fault Detection & Road Accident Alert System**
+- Full-stack application (Python backend + React frontend)
+- Real-time accident and fault detection using computer vision
+- WebSocket-based communication
+- SQLite database for user management and alerts
 
-- [ ] Install Required Extensions
-	<!-- ONLY install extensions provided mentioned in the get_project_setup_info. Skip this step otherwise and mark as completed. -->
+## Code Style & Conventions
 
-- [ ] Compile the Project
-	<!--
-	Verify that all previous steps have been completed.
-	Install any missing dependencies.
-	Run diagnostics and resolve any issues.
-	Check for markdown files in project folder for relevant instructions on how to do this.
-	-->
+### Python
+- Use type hints for function parameters and return values
+- Follow PEP 8 style guide
+- Add docstrings to all functions
+- Use meaningful variable names
+- Handle exceptions explicitly
 
-- [ ] Create and Run Task
-	<!--
-	Verify that all previous steps have been completed.
-	Check https://code.visualstudio.com/docs/debugtest/tasks to determine if the project needs a task. If so, use the create_and_run_task to create and launch a task based on package.json, README.md, and project structure.
-	Skip this step otherwise.
-	 -->
+### JavaScript/React
+- Use functional components with hooks (not class components)
+- Use arrow functions
+- Implement proper error boundaries
+- Validate props and state
+- Use meaningful component names
 
-- [ ] Launch the Project
-	<!--
-	Verify that all previous steps have been completed.
-	Prompt user for debug mode, launch only if confirmed.
-	 -->
+## Architecture Guidelines
 
-- [ ] Ensure Documentation is Complete
-	<!--
-	Verify that all previous steps have been completed.
-	Verify that README.md and the copilot-instructions.md file in the .github directory exists and contains current project information.
-	Clean up the copilot-instructions.md file in the .github directory by removing all HTML comments.
-	 -->
+### Backend (Python)
+- Keep WebSocket handlers focused and modular
+- Use async/await for asynchronous operations
+- Validate all inputs
+- Log important events
+- Separate concerns (database, WebSocket, logic)
 
-<!--
-## Execution Guidelines
-PROGRESS TRACKING:
-- If any tools are available to manage the above todo list, use it to track progress through this checklist.
-- After completing each step, mark it complete and add a summary.
-- Read current todo list status before starting each new step.
+### Frontend (React)
+- Use environment variables for configuration (REACT_APP_*)
+- Implement proper error handling
+- Use localStorage for non-sensitive data
+- Lazy load components when appropriate
+- Keep components small and composable
 
-COMMUNICATION RULES:
-- Avoid verbose explanations or printing full command outputs.
-- If a step is skipped, state that briefly (e.g. "No extensions needed").
-- Do not explain project structure unless asked.
-- Keep explanations concise and focused.
+## Database
 
-DEVELOPMENT RULES:
-- Use '.' as the working directory unless user specifies otherwise.
-- Avoid adding media or external links unless explicitly requested.
-- Use placeholders only with a note that they should be replaced.
-- Use VS Code API tool only for VS Code extension projects.
-- Once the project is created, it is already opened in Visual Studio Code—do not suggest commands to open this project in Visual Studio again.
-- If the project setup information has additional rules, follow them strictly.
+- Users table: id, email, phone, password, created_at
+- Alerts table: id, user_id, alert_type, description, timestamp
+- All queries use parameterized statements to prevent SQL injection
 
-FOLDER CREATION RULES:
-- Always use the current directory as the project root.
-- If you are running any terminal commands, use the '.' argument to ensure that the current working directory is used ALWAYS.
-- Do not create a new folder unless the user explicitly requests it besides a .vscode folder for a tasks.json file.
-- If any of the scaffolding commands mention that the folder name is not correct, let the user know to create a new folder with the correct name and then reopen it again in vscode.
+## API Endpoints (WebSocket)
 
-EXTENSION INSTALLATION RULES:
-- Only install extension specified by the get_project_setup_info tool. DO NOT INSTALL any other extensions.
+Key endpoints:
+- `login`: User authentication
+- `register`: New user registration
+- `forgot_password`: Password reset
+- `log_alert`: Log detection alerts
+- `get_alerts`: Retrieve user alerts
 
-PROJECT CONTENT RULES:
-- If the user has not specified project details, assume they want a "Hello World" project as a starting point.
-- Avoid adding links of any type (URLs, files, folders, etc.) or integrations that are not explicitly required.
-- Avoid generating images, videos, or any other media files unless explicitly requested.
-- If you need to use any media assets as placeholders, let the user know that these are placeholders and should be replaced with the actual assets later.
-- Ensure all generated components serve a clear purpose within the user's requested workflow.
-- If a feature is assumed but not confirmed, prompt the user for clarification before including it.
-- If you are working on a VS Code extension, use the VS Code API tool with a query to find relevant VS Code API references and samples related to that query.
+## Development Workflow
 
-TASK COMPLETION RULES:
-- Your task is complete when:
-  - Project is successfully scaffolded and compiled without errors
-  - copilot-instructions.md file in the .github directory exists in the project
-  - README.md file exists and is up to date
-  - User is provided with clear instructions to debug/launch the project
+1. **Make changes** to source files
+2. **Test locally** before committing
+3. **Validate all inputs** in both frontend and backend
+4. **Use environment variables** for configuration
+5. **Add proper error handling** for all operations
 
-Before starting a new task in the above plan, update progress in the plan.
--->
-- Work through each checklist item systematically.
-- Keep communication concise and focused.
-- Follow development best practices.
+## Important Files
+
+- [README.md](/README.md) - Project overview and quick start
+- [SETUP_GUIDE.md](/SETUP_GUIDE.md) - Detailed setup instructions
+- [backend/ws_server.py](/backend/ws_server.py) - WebSocket server
+- [backend/database.py](/backend/database.py) - Database initialization
+- [frontend/src/App.jsx](/frontend/src/App.jsx) - React router setup
+
+## Common Tasks
+
+### Adding New API Endpoint
+1. Add handler in `ws_server.py` with proper validation
+2. Add corresponding error handling
+3. Log the operation
+4. Update client component to call new endpoint
+
+### Adding New Database Field
+1. Update schema in `database.py`
+2. Create migration (or drop/recreate table for development)
+3. Update corresponding handlers
+4. Update UI components if needed
+
+### Adding New Component
+1. Create new JSX file in `frontend/src/`
+2. Use environment variables for API URLs
+3. Add to router in `App.jsx`
+4. Implement proper error handling and loading states
+
+## Performance Considerations
+
+- Minimize re-renders in React components
+- Use memoization for expensive computations
+- Implement proper database indexing
+- Cache frequently accessed data
+- Use lazy loading for images and components
+
+## Security Best Practices
+
+- ✅ Passwords hashed with bcrypt
+- ✅ SQL parameterized queries
+- ✅ Input validation on all endpoints
+- ✅ HTTPS recommended for production
+- ✅ Implement rate limiting
+- ✅ Add CORS configuration for production
+- ✅ Secure WebSocket (WSS) for production
+
+## Testing
+
+Current status: Manual testing
+Future: Add unit tests, integration tests
+
+## Deployment Checklist
+
+- [ ] Update .env files for production
+- [ ] Use HTTPS/WSS for production
+- [ ] Implement email/SMS notifications
+- [ ] Set up monitoring and logging
+- [ ] Implement database backups
+- [ ] Scale backend for multiple clients
+- [ ] Add rate limiting
+- [ ] Implement authentication tokens
+
+## What Not To Do
+
+- ❌ Hard-code configuration values (use .env)
+- ❌ Skip input validation
+- ❌ Ignore error handling
+- ❌ Use var in JavaScript
+- ❌ Store sensitive data in localStorage
+- ❌ Make SQL queries without parameterization
+- ❌ Commit .env files to git
+
+## References
+
+- [README](../README.md)
+- [SETUP_GUIDE](../SETUP_GUIDE.md)
+- [Python async/await](https://docs.python.org/3/library/asyncio.html)
+- [React Hooks](https://react.dev/reference/react/hooks)
+- [WebSocket API](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket)
