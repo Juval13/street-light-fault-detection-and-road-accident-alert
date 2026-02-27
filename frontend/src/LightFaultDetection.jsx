@@ -1,64 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useAlerts } from './useAlerts';
 import './styles.css';
 
-const WS_URL = process.env.REACT_APP_WS_URL || 'ws://localhost:8765';
-
 export default function LightFaultDetection() {
-  const [faults, setFaults] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const userId = localStorage.getItem('userId');
-
-  useEffect(() => {
-    fetchFaults();
-  }, []);
-
-  const fetchFaults = () => {
-    setLoading(true);
-    setError('');
-    
-    try {
-      const ws = new WebSocket(WS_URL);
-      const timeout = setTimeout(() => {
-        ws.close();
-        setError('Connection timeout. Is the backend running?');
-        setLoading(false);
-      }, 5000);
-
-      ws.onopen = () => {
-        ws.send(JSON.stringify({
-          type: 'get_alerts',
-          user_id: userId,
-          alert_type: 'light_fault'
-        }));
-      };
-
-      ws.onmessage = (event) => {
-        clearTimeout(timeout);
-        try {
-          const response = JSON.parse(event.data);
-          if (response.status === 'ok') {
-            setFaults(response.alerts || []);
-          } else {
-            setError(response.message || 'Failed to fetch faults');
-          }
-        } catch (e) {
-          setError('Invalid response format');
-        }
-        setLoading(false);
-        ws.close();
-      };
-
-      ws.onerror = () => {
-        clearTimeout(timeout);
-        setError('WebSocket error. Is the backend running?');
-        setLoading(false);
-      };
-    } catch (err) {
-      setError('Error: ' + err.message);
-      setLoading(false);
-    }
-  };
+  const { alerts: faults, loading, error, fetchAlerts } = useAlerts('light_fault');
 
   if (loading) {
     return (
@@ -77,7 +22,7 @@ export default function LightFaultDetection() {
         <div className="light-fault-detection-card">
           <h2>Light Fault Detection</h2>
           <p style={{color:'#e74c3c'}}>{error}</p>
-          <button onClick={fetchFaults} style={{marginTop:'10px', padding:'8px 16px', cursor:'pointer'}}>
+          <button onClick={fetchAlerts} style={{marginTop:'10px', padding:'8px 16px', cursor:'pointer'}}>
             Retry
           </button>
         </div>
@@ -113,7 +58,7 @@ export default function LightFaultDetection() {
             </tbody>
           </table>
         )}
-        <button onClick={fetchFaults} style={{marginTop:'10px', padding:'8px 16px', cursor:'pointer'}}>
+        <button onClick={fetchAlerts} style={{marginTop:'10px', padding:'8px 16px', cursor:'pointer'}}>
           Refresh
         </button>
       </div>

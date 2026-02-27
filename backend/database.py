@@ -35,7 +35,7 @@ def init_db():
     
     conn.commit()
     conn.close()
-    print("✓ Database initialized successfully")
+    print("OK: Database initialized successfully")
 
 def get_db():
     """Get database connection"""

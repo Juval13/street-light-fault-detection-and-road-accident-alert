@@ -41,8 +41,7 @@ export default function Login({ onLogin }) {
       clearTimeout(timeout);
       const response = JSON.parse(event.data);
       if (response.status === 'ok') {
-        localStorage.setItem('userId', response.user_id);
-        localStorage.setItem('userEmail', email);
+        localStorage.setItem('sessionToken', response.token);
         onLogin();
       } else {
         setError(response.message || 'Login failed');
