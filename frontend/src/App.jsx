@@ -5,12 +5,14 @@ import Login from './Login';
 import Dashboard from './Dashboard';
 import AccidentDetection from './AccidentDetection';
 import LightFaultDetection from './LightFaultDetection';
-import ForgotPassword from './ForgotPassword';
 import Register from './Register';
 
 const WS_URL = process.env.REACT_APP_WS_URL || 'ws://localhost:8765';
 
+console.log('App.jsx loaded');
+
 export default function App() {
+  console.log('App component rendering');
   const [isAuthenticated, setIsAuthenticated] = React.useState(!!localStorage.getItem('sessionToken'));
   const navigate = useNavigate();
 
@@ -41,7 +43,6 @@ export default function App() {
         <Route path="/dashboard" element={isAuthenticated ? <Dashboard onLogout={handleLogout} /> : <Navigate to="/login" />} />
         <Route path="/accident-detection" element={isAuthenticated ? <AccidentDetection /> : <Navigate to="/login" />} />
         <Route path="/light-fault-detection" element={isAuthenticated ? <LightFaultDetection /> : <Navigate to="/login" />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </div>

@@ -10,12 +10,11 @@ export default function Login({ onLogin }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handlePasswordLogin = (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    // Validation
     if (!email || !password) {
       setError('Email and password are required');
       setLoading(false);
@@ -65,8 +64,9 @@ export default function Login({ onLogin }) {
       <div className="shape shape2"></div>
       <div className="shape shape3"></div>
       <div className="login-bg-overlay">
-        <form className="login-card" onSubmit={handleSubmit}>
+        <form className="login-card" onSubmit={handlePasswordLogin}>
           <h2 className="login-title">Login</h2>
+          
           <label htmlFor="email" style={{textAlign:'left', width:'100%', fontWeight:'500', marginBottom:4}}>Email</label>
           <input
             id="email"
@@ -78,7 +78,8 @@ export default function Login({ onLogin }) {
             required
             disabled={loading}
           />
-          <label htmlFor="password" style={{textAlign:'left', width:'100%', fontWeight:'500', marginBottom:4}}>Password</label>
+
+          <label htmlFor="password" style={{textAlign:'left', width:'100%', fontWeight:'500', marginBottom:4, marginTop:16}}>Password</label>
           <input
             id="password"
             className="login-input"
@@ -89,13 +90,16 @@ export default function Login({ onLogin }) {
             required
             disabled={loading}
           />
-          {error && <div className="login-error">{error}</div>}
+
+          {error && <div className="error-message">{error}</div>}
+
           <button className="login-btn" type="submit" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? 'Processing...' : 'Login'}
           </button>
-          <div style={{marginTop:16, display:'flex', justifyContent:'space-between', width:'100%'}}>
-            <Link to="/forgot-password" style={{color:'#1976d2', textDecoration:'underline', fontWeight:'500'}}>Forgot Password?</Link>
-            <Link to="/register" style={{color:'#1976d2', textDecoration:'underline', fontWeight:'500'}}>Sign Up</Link>
+
+          <div style={{textAlign:'center', marginTop:16}}>
+            <span style={{color:'#666'}}>Don't have an account? </span>
+            <Link to="/register" style={{color:'#1976d2', textDecoration:'none', fontWeight:'500'}}>Register</Link>
           </div>
         </form>
       </div>

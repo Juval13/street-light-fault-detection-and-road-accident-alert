@@ -4,7 +4,7 @@ import './styles.css';
 
 const WS_URL = process.env.REACT_APP_WS_URL || 'ws://localhost:8765';
 
-const ForgotPassword = () => {
+const ForgotPassword = ({ onLogin }) => {
   const [method, setMethod] = useState('email');
   const [value, setValue] = useState('');
   const [status, setStatus] = useState('');
@@ -93,11 +93,23 @@ const ForgotPassword = () => {
         const resp = JSON.parse(event.data);
         setStatus(resp.message);
         setLoading(false);
-        if (resp.status === 'ok') {
+        if (resp.status === 'ok' && resp.token) {
+          // Save session token and auto-login
+          localStorage.setItem('sessionToken', resp.token);
+          setStatus('OTP verified! Logging you in...');
           setTimeout(() => {
-            // Redirect to login or show reset password form
+            if (onLogin) {
+              onLogin();
+            } else {
+              window.location.href = '/dashboard';
+            }
+          }, 1500);
+        } else if (resp.status === 'ok') {
+          // Success but no token (shouldn't happen)
+          setStatus('OTP verified! Redirecting to login...');
+          setTimeout(() => {
             window.location.href = '/login';
-          }, 2000);
+          }, 1500);
         }
         ws.close();
       };
